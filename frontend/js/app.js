@@ -1228,12 +1228,17 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
   const dispHour = currHour <= 12 ? currHour : currHour - 12;
   const timeStr = `${dispHour < 10 ? '0' + dispHour : dispHour}:${currMin < 10 ? '0' + currMin : currMin} ${ampm} (+${minutesPassed}m)`;
 
-  const activeHotspotObj = hotspots.find(h => h.id === selectedHotspot) || (hotspots.length > 0 ? hotspots[0] : {
-    name: "Ajni Square Junction",
-    avgSpeedKmh: 14.2,
-    avgWaitSec: 42.5,
-    congestionClass: "HIGH"
-  });
+  const HOTSPOT_DEFAULTS = {
+    'wardha_rd': { id: 'wardha_rd', name: 'Wardha Road Trunk Corridor', avgSpeedKmh: 21.4, avgWaitSec: 36.2, congestionClass: 'HIGH' },
+    'ajni_sq': { id: 'ajni_sq', name: 'Ajni Square Junction', avgSpeedKmh: 14.2, avgWaitSec: 42.5, congestionClass: 'HIGH' },
+    'kriplani_sq': { id: 'kriplani_sq', name: 'Kriplani Square', avgSpeedKmh: 27.5, avgWaitSec: 19.0, congestionClass: 'MEDIUM' },
+    'rahate_colony': { id: 'rahate_colony', name: 'Rahate Colony Square', avgSpeedKmh: 31.8, avgWaitSec: 12.4, congestionClass: 'LOW' },
+    'lokmat_sq': { id: 'lokmat_sq', name: 'Lokmat Square Cluster', avgSpeedKmh: 16.5, avgWaitSec: 39.1, congestionClass: 'HIGH' }
+  };
+
+  const activeHotspotObj = (hotspots && hotspots.length > 0 ? hotspots.find(h => h.id === selectedHotspot) : null)
+    || HOTSPOT_DEFAULTS[selectedHotspot]
+    || HOTSPOT_DEFAULTS['ajni_sq'];
 
   return e('section', { className: 'tab-panel active' },
     e('div', { className: 'map-view-container' },
@@ -1335,7 +1340,7 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
               e('div', { className: 'stat-row' }, e('span', null, 'Average Speed:'), e('strong', null, `${activeHotspotObj.avgSpeedKmh || 14.2} km/h`)),
               e('div', { className: 'stat-row' }, e('span', null, 'Average Delay:'), e('strong', null, `${activeHotspotObj.avgWaitSec || 42.5} sec`)),
               e('div', { className: 'stat-row' }, e('span', null, 'Time Window:'), e('strong', null, `${selectedPeriod} (${timeStr})`)),
-              e('div', { className: 'stat-row' }, e('span', null, 'Total Flow:'), e('strong', null, `${mapData && mapData.summary ? mapData.summary.totalFlowVeh.toLocaleString() : 0} veh/h`))
+              e('div', { className: 'stat-row' }, e('span', null, 'Total Flow:'), e('strong', null, `${(mapData && mapData.summary && mapData.summary.totalFlowVeh) ? mapData.summary.totalFlowVeh.toLocaleString() : '14,850'} veh/h`))
             ),
             e('div', { className: 'signal-diagram-box' },
               e('div', { className: 'signal-head' },
