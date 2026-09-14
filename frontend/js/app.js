@@ -1072,7 +1072,12 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
 
     landmarkPositions.forEach(pos => {
       let nodeColor = 0x22c55e;
-      if (mapData && mapData.class_counts) {
+      const hObj = (hotspots && hotspots.length > 0) ? hotspots.find(h => h.id === pos.id) : null;
+      if (hObj) {
+        if (hObj.congestionClass === 'HIGH') nodeColor = 0xef4444;
+        else if (hObj.congestionClass === 'MEDIUM') nodeColor = 0xeab308;
+        else nodeColor = 0x22c55e;
+      } else if (mapData && mapData.class_counts) {
         if (mapData.class_counts.HIGH > mapData.class_counts.LOW) {
           nodeColor = (pos.id === 'ajni_sq' || pos.id === 'lokmat_sq') ? 0xef4444 : 0xeab308;
         }
@@ -1201,7 +1206,7 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
       window.removeEventListener('resize', handleResize);
       if (animId) cancelAnimationFrame(animId);
     };
-  }, [mapData]);
+  }, [mapData, hotspots]);
 
   const setCameraView = (type) => {
     setCameraPreset(type);
