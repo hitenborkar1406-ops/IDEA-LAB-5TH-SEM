@@ -290,7 +290,7 @@ function App() {
   const [selectedArea, setSelectedArea] = useState('corridor-a');
   const [selectedTime, setSelectedTime] = useState('morning-peak');
   const [selectedScenario, setSelectedScenario] = useState('baseline');
-  
+
   const [demandMultiplier, setDemandMultiplier] = useState(1.0);
   const [laneClosureActive, setLaneClosureActive] = useState(false);
 
@@ -356,7 +356,7 @@ function App() {
     setSimLogs(['[SYS] Starting live simulation run...']);
 
     const streamUrl = `/api/simulate/stream?time_window=${timeWindowKey}&scenario=${selectedScenario}&demand_multiplier=${demandMultiplier}&lane_closure=${laneClosureActive}&corridor=${selectedArea}`;
-    
+
     if (typeof EventSource !== 'undefined' && apiStatus.connected) {
       const evtSource = new EventSource(streamUrl);
       evtSource.addEventListener('progress', (ev) => {
@@ -365,7 +365,7 @@ function App() {
           setSimProgress(data.pct);
           setSimStatusText(data.status);
           setSimLogs(prev => [...prev, `[ENGINE] ${data.status}`]);
-        } catch (err) {}
+        } catch (err) { }
       });
 
       evtSource.addEventListener('result', (ev) => {
@@ -622,7 +622,7 @@ function ControlPanelTab({
   onDemandChange, onLaneClosureToggle
 }) {
   const isBaseline = (selectedScenario === 'baseline');
-  
+
   const CORRIDOR_NAMES = {
     'corridor-a': 'Sitabuldi Junction & Variety Sq. Network',
     'corridor-b': 'Wardha Road Highway (Airport Sq. to Rahate Colony)',
@@ -631,7 +631,7 @@ function ControlPanelTab({
   };
 
   const activeAreaName = CORRIDOR_NAMES[selectedArea] || 'Sitabuldi Junction Network';
-  
+
   // Real dynamic metrics derived from backend API response & demand parameters
   const baseDelay = liveScenarioData ? Math.round(liveScenarioData.baseline.avgDelay) : Math.round(85 * demandMultiplier * (laneClosureActive ? 1.25 : 1.0));
   const propDelay = liveScenarioData ? Math.round(liveScenarioData.proposed.avgDelay) : Math.round(52 * demandMultiplier * (laneClosureActive ? 1.12 : 1.0));
@@ -661,7 +661,7 @@ function ControlPanelTab({
 
   return e('section', { className: 'tab-panel active' },
     e('div', { className: 'dashboard-grid' },
-      
+
       // Left Sidebar: Simulation Parameters Form
       e('div', { className: 'control-card glass-panel' },
         e('div', { className: 'card-header' },
@@ -703,7 +703,7 @@ function ControlPanelTab({
 
       // Right Main Panel
       e('div', { className: 'overview-container' },
-        
+
         // Scenario Summary Banner
         e('div', { className: 'scenario-summary-banner glass-panel' },
           e('div', { className: 'banner-info' },
@@ -798,66 +798,66 @@ function ControlPanelTab({
 
           isMatrixComputing
             ? e('div', { className: 'computing-hud-container' },
-                e('div', { className: 'computing-spinner-row' },
-                  e('i', { className: 'fa-solid fa-atom fa-spin' }),
-                  ' Synthesizing TraCI Detector Feeds & Comparative Delta Matrix...'
-                ),
-                e('div', { className: 'computing-scanline-track' },
-                  e('div', { className: 'computing-scanline-bar' })
-                ),
-                e('div', { className: 'computing-subtext' },
-                  e('i', { className: 'fa-solid fa-microchip' }),
-                  ' Evaluating 4 intersections loop detectors • Computing net delay reduction & capacity gains...'
-                )
+              e('div', { className: 'computing-spinner-row' },
+                e('i', { className: 'fa-solid fa-atom fa-spin' }),
+                ' Synthesizing TraCI Detector Feeds & Comparative Delta Matrix...'
+              ),
+              e('div', { className: 'computing-scanline-track' },
+                e('div', { className: 'computing-scanline-bar' })
+              ),
+              e('div', { className: 'computing-subtext' },
+                e('i', { className: 'fa-solid fa-microchip' }),
+                ' Evaluating 4 intersections loop detectors • Computing net delay reduction & capacity gains...'
               )
+            )
             : e('div', { className: 'table-responsive' },
-                e('table', { className: 'data-table' },
-                  e('thead', null,
-                    e('tr', null,
-                      e('th', null, 'Metric Parameter'),
-                      e('th', null, 'Scenario 1 (Baseline)'),
-                      e('th', null, 'Scenario 2 (Proposed ML)'),
-                      e('th', null, 'Net Improvement'),
-                      e('th', null, 'Status Impact')
-                    )
-                  ),
-                  e('tbody', null,
-                    e('tr', null,
-                      e('td', null, e('i', { className: 'fa-solid fa-hourglass-half text-red' }), ' ', e('strong', null, 'Avg. Delay')),
-                      e('td', { className: 'baseline-col' }, `${baseDelay} sec`),
-                      e('td', { className: 'proposed-col' }, `${propDelay} sec`),
-                      e('td', { className: 'improvement-col positive' }, `↓ ${delayDiff} sec (${delayPct}%)`),
-                      e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Delay Reduced'))
-                    ),
-                    e('tr', null,
-                      e('td', null, e('i', { className: 'fa-solid fa-align-left text-orange' }), ' ', e('strong', null, 'Queue Length')),
-                      e('td', { className: 'baseline-col' }, `${baseQueue} m`),
-                      e('td', { className: 'proposed-col' }, `${propQueue} m`),
-                      e('td', { className: 'improvement-col positive' }, `↓ ${queueDiff} m (${queuePct}%)`),
-                      e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Queue Cleared'))
-                    ),
-                    e('tr', null,
-                      e('td', null, e('i', { className: 'fa-solid fa-route text-yellow' }), ' ', e('strong', null, 'Travel Time')),
-                      e('td', { className: 'baseline-col' }, `${baseTravel} min`),
-                      e('td', { className: 'proposed-col' }, `${propTravel} min`),
-                      e('td', { className: 'improvement-col positive' }, `↓ ${travelDiff} min (${travelPct}%)`),
-                      e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Fast Flow'))
-                    ),
-                    e('tr', null,
-                      e('td', null, e('i', { className: 'fa-solid fa-truck-fast text-green' }), ' ', e('strong', null, 'Throughput')),
-                      e('td', { className: 'baseline-col' }, `${baseThroughput.toLocaleString()} veh/h`),
-                      e('td', { className: 'proposed-col' }, `${propThroughput.toLocaleString()} veh/h`),
-                      e('td', { className: 'improvement-col positive' }, `↑ ${tpDiff} veh/h (${tpGainPct}%)`),
-                      e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-up' }), ' Capacity Boost'))
-                    )
+              e('table', { className: 'data-table' },
+                e('thead', null,
+                  e('tr', null,
+                    e('th', null, 'Metric Parameter'),
+                    e('th', null, 'Scenario 1 (Baseline)'),
+                    e('th', null, 'Scenario 2 (Proposed ML)'),
+                    e('th', null, 'Net Improvement'),
+                    e('th', null, 'Status Impact')
                   )
                 ),
-                e('div', { className: 'box-telemetry-footer' },
-                  e('span', null, 'Run Token: ', e('strong', null, `TRACI_NAGPUR_${selectedTime.toUpperCase()}_01`)),
-                  e('span', null, 'Calculation Status: ', e('strong', { className: 'text-green' }, 'Validated Dynamic Output')),
-                  e('span', null, 'Timestamp: ', e('strong', null, lastCalculatedTime || 'Live Continuous Sync'))
+                e('tbody', null,
+                  e('tr', null,
+                    e('td', null, e('i', { className: 'fa-solid fa-hourglass-half text-red' }), ' ', e('strong', null, 'Avg. Delay')),
+                    e('td', { className: 'baseline-col' }, `${baseDelay} sec`),
+                    e('td', { className: 'proposed-col' }, `${propDelay} sec`),
+                    e('td', { className: 'improvement-col positive' }, `↓ ${delayDiff} sec (${delayPct}%)`),
+                    e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Delay Reduced'))
+                  ),
+                  e('tr', null,
+                    e('td', null, e('i', { className: 'fa-solid fa-align-left text-orange' }), ' ', e('strong', null, 'Queue Length')),
+                    e('td', { className: 'baseline-col' }, `${baseQueue} m`),
+                    e('td', { className: 'proposed-col' }, `${propQueue} m`),
+                    e('td', { className: 'improvement-col positive' }, `↓ ${queueDiff} m (${queuePct}%)`),
+                    e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Queue Cleared'))
+                  ),
+                  e('tr', null,
+                    e('td', null, e('i', { className: 'fa-solid fa-route text-yellow' }), ' ', e('strong', null, 'Travel Time')),
+                    e('td', { className: 'baseline-col' }, `${baseTravel} min`),
+                    e('td', { className: 'proposed-col' }, `${propTravel} min`),
+                    e('td', { className: 'improvement-col positive' }, `↓ ${travelDiff} min (${travelPct}%)`),
+                    e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-down' }), ' Fast Flow'))
+                  ),
+                  e('tr', null,
+                    e('td', null, e('i', { className: 'fa-solid fa-truck-fast text-green' }), ' ', e('strong', null, 'Throughput')),
+                    e('td', { className: 'baseline-col' }, `${baseThroughput.toLocaleString()} veh/h`),
+                    e('td', { className: 'proposed-col' }, `${propThroughput.toLocaleString()} veh/h`),
+                    e('td', { className: 'improvement-col positive' }, `↑ ${tpDiff} veh/h (${tpGainPct}%)`),
+                    e('td', null, e('span', { className: 'badge-status success' }, e('i', { className: 'fa-solid fa-arrow-up' }), ' Capacity Boost'))
+                  )
                 )
+              ),
+              e('div', { className: 'box-telemetry-footer' },
+                e('span', null, 'Run Token: ', e('strong', null, `TRACI_NAGPUR_${selectedTime.toUpperCase()}_01`)),
+                e('span', null, 'Calculation Status: ', e('strong', { className: 'text-green' }, 'Validated Dynamic Output')),
+                e('span', null, 'Timestamp: ', e('strong', null, lastCalculatedTime || 'Live Continuous Sync'))
               )
+            )
         ),
 
         // ======================================================================
@@ -878,63 +878,63 @@ function ControlPanelTab({
 
           isMatrixComputing
             ? e('div', { className: 'computing-hud-container' },
-                e('div', { className: 'computing-spinner-row' },
-                  e('i', { className: 'fa-solid fa-network-wired fa-spin' }),
-                  ' Calculating Multi-Corridor Capacity Utilization & Balancing Vectors...'
-                ),
-                e('div', { className: 'computing-scanline-track' },
-                  e('div', { className: 'computing-scanline-bar' })
-                ),
-                e('div', { className: 'computing-subtext' },
-                  e('i', { className: 'fa-solid fa-arrows-split-up-and-left' }),
-                  ' Mapping saturation on primary axis • Allocating spare capacity on secondary bypass corridor...'
-                )
+              e('div', { className: 'computing-spinner-row' },
+                e('i', { className: 'fa-solid fa-network-wired fa-spin' }),
+                ' Calculating Multi-Corridor Capacity Utilization & Balancing Vectors...'
+              ),
+              e('div', { className: 'computing-scanline-track' },
+                e('div', { className: 'computing-scanline-bar' })
+              ),
+              e('div', { className: 'computing-subtext' },
+                e('i', { className: 'fa-solid fa-arrows-split-up-and-left' }),
+                ' Mapping saturation on primary axis • Allocating spare capacity on secondary bypass corridor...'
               )
+            )
             : e('div', null,
-                e('p', { className: 'field-hint', style: { marginBottom: '12px' } },
-                  `Uneven volume distribution across primary ${activeAreaName} vs secondary bypass corridor:`
-                ),
-                e('div', { className: 'imbalance-grid' },
-                  e('div', { className: 'imbalance-card' },
-                    e('div', { className: 'imbalance-header' },
-                      e('span', null, e('strong', null, `${activeAreaName.split(':')[0]} Primary Axis`)),
-                      e('span', { className: 'text-red font-bold' }, `${trunkSatPct}% Capacity (${trunkSatPct > 80 ? 'Saturated' : 'Heavy Flow'})`)
-                    ),
-                    e('div', { className: 'imbalance-bar-track' },
-                      e('div', { className: 'imbalance-bar-fill high', style: { width: `${trunkSatPct}%` } })
-                    ),
-                    e('span', { className: 'field-hint' }, `Active Flow: ${primaryVolume.toLocaleString()} veh/hr • Requires signal extension + reroute diversion.`)
+              e('p', { className: 'field-hint', style: { marginBottom: '12px' } },
+                `Uneven volume distribution across primary ${activeAreaName} vs secondary bypass corridor:`
+              ),
+              e('div', { className: 'imbalance-grid' },
+                e('div', { className: 'imbalance-card' },
+                  e('div', { className: 'imbalance-header' },
+                    e('span', null, e('strong', null, `${activeAreaName.split(':')[0]} Primary Axis`)),
+                    e('span', { className: 'text-red font-bold' }, `${trunkSatPct}% Capacity (${trunkSatPct > 80 ? 'Saturated' : 'Heavy Flow'})`)
                   ),
-                  e('div', { className: 'imbalance-card' },
-                    e('div', { className: 'imbalance-header' },
-                      e('span', null, e('strong', null, `${activeAreaName.split(':')[0]} Secondary Bypass`)),
-                      e('span', { className: 'text-green font-bold' }, `${bypassSatPct}% Capacity (Underutilized)`)
-                    ),
-                    e('div', { className: 'imbalance-bar-track' },
-                      e('div', { className: 'imbalance-bar-fill low', style: { width: `${bypassSatPct}%` } })
-                    ),
-                    e('span', { className: 'field-hint' }, `Absorbed Flow: ${bypassVolume.toLocaleString()} veh/hr • ${100 - bypassSatPct}% available headroom to absorb diverted vehicles.`)
-                  )
-                ),
-                e('div', { className: 'imbalance-stats-row' },
-                  e('div', { className: 'imbalance-stat-item' },
-                    e('span', { className: 'imbalance-stat-label' }, 'Primary Saturation'),
-                    e('span', { className: 'imbalance-stat-val text-red' }, `${trunkSatPct}%`)
+                  e('div', { className: 'imbalance-bar-track' },
+                    e('div', { className: 'imbalance-bar-fill high', style: { width: `${trunkSatPct}%` } })
                   ),
-                  e('div', { className: 'imbalance-stat-item' },
-                    e('span', { className: 'imbalance-stat-label' }, 'Bypass Headroom'),
-                    e('span', { className: 'imbalance-stat-val text-green' }, `${100 - bypassSatPct}% Free`)
-                  ),
-                  e('div', { className: 'imbalance-stat-item' },
-                    e('span', { className: 'imbalance-stat-label' }, 'AI Load Balance Score'),
-                    e('span', { className: 'imbalance-stat-val text-gold' }, `${balanceScore}/100`)
-                  )
+                  e('span', { className: 'field-hint' }, `Active Flow: ${primaryVolume.toLocaleString()} veh/hr • Requires signal extension + reroute diversion.`)
                 ),
-                e('div', { className: 'box-telemetry-footer' },
-                  e('span', null, 'Corridor Strategy: ', e('strong', null, 'Dynamic Phase Extension (+18s) & Ring Rd Bypass Diversion')),
-                  e('span', null, 'Optimization State: ', e('strong', { className: 'text-green' }, 'Balanced Load Equilibrium'))
+                e('div', { className: 'imbalance-card' },
+                  e('div', { className: 'imbalance-header' },
+                    e('span', null, e('strong', null, `${activeAreaName.split(':')[0]} Secondary Bypass`)),
+                    e('span', { className: 'text-green font-bold' }, `${bypassSatPct}% Capacity (Underutilized)`)
+                  ),
+                  e('div', { className: 'imbalance-bar-track' },
+                    e('div', { className: 'imbalance-bar-fill low', style: { width: `${bypassSatPct}%` } })
+                  ),
+                  e('span', { className: 'field-hint' }, `Absorbed Flow: ${bypassVolume.toLocaleString()} veh/hr • ${100 - bypassSatPct}% available headroom to absorb diverted vehicles.`)
                 )
+              ),
+              e('div', { className: 'imbalance-stats-row' },
+                e('div', { className: 'imbalance-stat-item' },
+                  e('span', { className: 'imbalance-stat-label' }, 'Primary Saturation'),
+                  e('span', { className: 'imbalance-stat-val text-red' }, `${trunkSatPct}%`)
+                ),
+                e('div', { className: 'imbalance-stat-item' },
+                  e('span', { className: 'imbalance-stat-label' }, 'Bypass Headroom'),
+                  e('span', { className: 'imbalance-stat-val text-green' }, `${100 - bypassSatPct}% Free`)
+                ),
+                e('div', { className: 'imbalance-stat-item' },
+                  e('span', { className: 'imbalance-stat-label' }, 'AI Load Balance Score'),
+                  e('span', { className: 'imbalance-stat-val text-gold' }, `${balanceScore}/100`)
+                )
+              ),
+              e('div', { className: 'box-telemetry-footer' },
+                e('span', null, 'Corridor Strategy: ', e('strong', null, 'Dynamic Phase Extension (+18s) & Ring Rd Bypass Diversion')),
+                e('span', null, 'Optimization State: ', e('strong', { className: 'text-green' }, 'Balanced Load Equilibrium'))
               )
+            )
         ),
 
         // What-If Scenario Stress Testing Sandbox
@@ -1110,7 +1110,7 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
     for (let i = 0; i < total3DVehicles; i++) {
       const randType = Math.random();
       let vehGeo, vehColor;
-      
+
       if (randType > 0.7) {
         vehGeo = new THREE.BoxGeometry(9, 3.2, 3.2);
         vehColor = 0xe5c158;
@@ -1174,7 +1174,7 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
       vehiclesList.forEach(v => {
         const speedMult = (mapData && mapData.summary && mapData.summary.avgSpeedKmh) ? (mapData.summary.avgSpeedKmh / 20.0) : 1.0;
         const currentSpeed = v.userData.speed * Math.max(0.2, speedMult);
-        
+
         if (v.userData.axis === 'x') {
           v.position.x += v.userData.dir * currentSpeed;
           if (v.position.x > 140) v.position.x = -140;
@@ -1333,12 +1333,12 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
             ),
             e('span', { className: 'sim-speed-badge' }, e('i', { className: 'fa-solid fa-bolt' }), ` ${mapData ? mapData.total_segments : 0} Road Segments Loaded`)
           ),
-          
+
           e('div', { className: 'canvas-wrapper-3d' },
             e('div', { ref: mountRef, id: 'threeCanvasContainer' }),
             e('div', { className: 'overlay-3d-hint' }, e('i', { className: 'fa-solid fa-hand-pointer' }), ' Click any 3D node to inspect corridor metrics | Drag to rotate 360°')
           ),
-          
+
           e('div', { className: 'legend-bar' },
             e('span', { className: 'legend-title' }, 'ML Congestion Legend:'),
             e('span', { className: 'legend-item' }, e('span', { className: 'dot green' }), ' Free Flow (LOW Congestion)'),
@@ -1560,8 +1560,8 @@ function MLEngineTab({ selectedTime }) {
           e('div', { className: 'chart-container' }, e('canvas', { id: 'featureImportanceChart' })),
           e('div', { className: 'provenance-box', style: { marginTop: '16px' } },
             e('div', { className: 'provenance-item' }, e('span', null, 'Validation:'), ' ', e('strong', null, mlInfo ? mlInfo.validation : '5-Fold CV')),
-            e('div', { className: 'provenance-item' }, e('span', null, 'Accuracy:'), ' ', e('strong', { className: 'text-green' }, mlInfo ? mlInfo.accuracy : '95.4%')),
-            e('div', { className: 'provenance-item' }, e('span', null, 'F1-Score:'), ' ', e('strong', { className: 'text-gold' }, mlInfo ? mlInfo.f1_score : '0.94'))
+            e('div', { className: 'provenance-item' }, e('span', null, 'Accuracy:'), ' ', e('strong', { className: 'text-green' }, mlInfo ? mlInfo.accuracy : '82%')),
+            e('div', { className: 'provenance-item' }, e('span', null, 'F1-Score:'), ' ', e('strong', { className: 'text-gold' }, mlInfo ? mlInfo.f1_score : '0.82'))
           )
         )
       )
@@ -1946,33 +1946,33 @@ function AnalyticsTab({ selectedScenario, selectedTime }) {
 // Shared colour palette for per-vehicle identity (stable hash → colour)
 function vehicleColor(trackId) {
   const PALETTE = [
-    '#22c55e','#38bdf8','#f472b6','#fb923c','#a78bfa',
-    '#34d399','#facc15','#60a5fa','#f87171','#c084fc',
+    '#22c55e', '#38bdf8', '#f472b6', '#fb923c', '#a78bfa',
+    '#34d399', '#facc15', '#60a5fa', '#f87171', '#c084fc',
   ];
   return PALETTE[Math.abs(trackId) % PALETTE.length];
 }
 
 function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, setSpeed, setSimTime }) {
   // ── refs ──────────────────────────────────────────────────────────────────
-  const videoRef     = useRef(null);
-  const overlayRef   = useRef(null);   // canvas on top of video
+  const videoRef = useRef(null);
+  const overlayRef = useRef(null);   // canvas on top of video
   const twinCanvasRef = useRef(null);  // right-pane digital twin
-  const rafRef       = useRef(null);
-  const syncRef      = useRef({ running: false, lastWall: null });
+  const rafRef = useRef(null);
+  const syncRef = useRef({ running: false, lastWall: null });
   const detectionRef = useRef(null);   // video_detections.json data
-  const frameIdxRef  = useRef([]);     // sorted list of timestamps
+  const frameIdxRef = useRef([]);     // sorted list of timestamps
 
   // ── state ─────────────────────────────────────────────────────────────────
-  const [detData,   setDetData]   = useState(null);
-  const [detError,  setDetError]  = useState(null);
-  const [sharedT,   setSharedT]   = useState(0);        // shared clock (seconds)
+  const [detData, setDetData] = useState(null);
+  const [detError, setDetError] = useState(null);
+  const [sharedT, setSharedT] = useState(0);        // shared clock (seconds)
   const [liveCount, setLiveCount] = useState(0);
   const [videoReady, setVideoReady] = useState(false);
-  const sharedTRef   = useRef(0);
+  const sharedTRef = useRef(0);
 
   const VIDEO_URL = '/api/sumo/video-stream';  // served from backend or direct file
   const VIDEO_DURATION = simData ? simData.meta.duration_sec || 8.0 : 8.0;
-  const SIM_DURATION   = simData ? (simData.meta.steps_run || 800) : 800;
+  const SIM_DURATION = simData ? (simData.meta.steps_run || 800) : 800;
 
   // map video seconds → sim seconds (linear scale)
   const videoToSim = (vt) => (vt / VIDEO_DURATION) * SIM_DURATION;
@@ -1984,7 +1984,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
       .then(r => r.ok ? r.json() : Promise.reject(`HTTP ${r.status}`))
       .then(data => {
         detectionRef.current = data;
-        frameIdxRef.current  = data.frames.map(f => f.timestamp_sec);
+        frameIdxRef.current = data.frames.map(f => f.timestamp_sec);
         setDetData(data);
       })
       .catch(err => setDetError(String(err)));
@@ -1997,7 +1997,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
   function frameAtTime(tSec) {
     if (!detectionRef.current) return null;
     const frames = detectionRef.current.frames;
-    const idx    = frameIdxRef.current;
+    const idx = frameIdxRef.current;
     if (!idx.length) return null;
     // binary search closest
     let lo = 0, hi = idx.length - 1;
@@ -2011,40 +2011,40 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
 
   // ── Draw bounding boxes on overlay canvas ─────────────────────────────────
   function drawOverlay(videoT) {
-    const cv  = overlayRef.current;
+    const cv = overlayRef.current;
     const vid = videoRef.current;
     if (!cv || !vid) return;
     const ctx = cv.getContext('2d');
-    cv.width  = vid.videoWidth  || vid.clientWidth;
+    cv.width = vid.videoWidth || vid.clientWidth;
     cv.height = vid.videoHeight || vid.clientHeight;
     ctx.clearRect(0, 0, cv.width, cv.height);
 
     const frame = frameAtTime(videoT);
     if (!frame) return;
 
-    const scaleX = cv.width  / (detectionRef.current?.meta?.width  || cv.width);
+    const scaleX = cv.width / (detectionRef.current?.meta?.width || cv.width);
     const scaleY = cv.height / (detectionRef.current?.meta?.height || cv.height);
 
     frame.vehicles.forEach(v => {
       const [x1, y1, x2, y2] = v.bbox;
       const col = vehicleColor(v.track_id);
-      const bx  = x1 * scaleX, by = y1 * scaleY;
-      const bw  = (x2 - x1) * scaleX, bh = (y2 - y1) * scaleY;
+      const bx = x1 * scaleX, by = y1 * scaleY;
+      const bw = (x2 - x1) * scaleX, bh = (y2 - y1) * scaleY;
 
       // Glowing box
       ctx.save();
       ctx.shadowColor = col;
-      ctx.shadowBlur  = 8;
+      ctx.shadowBlur = 8;
       ctx.strokeStyle = col;
-      ctx.lineWidth   = 2.2;
+      ctx.lineWidth = 2.2;
       ctx.strokeRect(bx, by, bw, bh);
-      ctx.shadowBlur  = 0;
+      ctx.shadowBlur = 0;
 
       // ID label
       ctx.fillStyle = col;
       const label = `#${v.track_id}`;
       ctx.font = 'bold 11px monospace';
-      const tw  = ctx.measureText(label).width + 6;
+      const tw = ctx.measureText(label).width + 6;
       ctx.fillRect(bx, by - 16, tw, 16);
       ctx.fillStyle = '#000';
       ctx.fillText(label, bx + 3, by - 3);
@@ -2061,22 +2061,22 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
     const tls = simData.traffic_lights;
     const tFloor = Math.floor(simT);
     const rec = tls.find(r => Math.floor(r.time) === tFloor) ||
-                tls.find(r => Math.floor(r.time) === tFloor - 1) ||
-                tls[0];
+      tls.find(r => Math.floor(r.time) === tFloor - 1) ||
+      tls[0];
     if (!rec) return;
 
-    const state      = rec.phase_state || '';
+    const state = rec.phase_state || '';
     const greenCount = (state.match(/G/g) || []).length;
-    const isGreen    = greenCount >= Math.ceil(state.length / 2);
-    const countdown  = Math.round(rec.seconds_until_switch);
+    const isGreen = greenCount >= Math.ceil(state.length / 2);
+    const countdown = Math.round(rec.seconds_until_switch);
 
     // Draw signal circles at 4 approach directions
-    const radius  = Math.max(6, 16 * cam.scale / 200000);
+    const radius = Math.max(6, 16 * cam.scale / 200000);
     const offsets = [
-      [ 0, -radius * 4],   // North
-      [ radius * 4,  0],   // East
-      [ 0,  radius * 4],   // South
-      [-radius * 4,  0],   // West
+      [0, -radius * 4],   // North
+      [radius * 4, 0],   // East
+      [0, radius * 4],   // South
+      [-radius * 4, 0],   // West
     ];
 
     offsets.forEach(([ox, oy]) => {
@@ -2102,7 +2102,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
 
   // ── Draw digital twin (right canvas) ─────────────────────────────────────
   function drawTwin(simT) {
-    const cv  = twinCanvasRef.current;
+    const cv = twinCanvasRef.current;
     if (!cv || !simData) return;
     const ctx = cv.getContext('2d');
     const W = cv.width, H = cv.height;
@@ -2158,9 +2158,9 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
       grd.addColorStop(0, 'rgba(212,175,55,0.22)');
       grd.addColorStop(1, 'rgba(212,175,55,0)');
       ctx.fillStyle = grd;
-      ctx.beginPath(); ctx.arc(jx, jy, 50, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(jx, jy, 50, 0, Math.PI * 2); ctx.fill();
 
-      ctx.beginPath(); ctx.arc(jx, jy, 10, 0, Math.PI*2);
+      ctx.beginPath(); ctx.arc(jx, jy, 10, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(212,175,55,0.15)'; ctx.fill();
       ctx.strokeStyle = 'rgba(212,175,55,0.8)'; ctx.lineWidth = 1.5; ctx.stroke();
 
@@ -2184,15 +2184,15 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
       ctx.shadowColor = col; ctx.shadowBlur = 5;
       const rx = Math.min(carWid * 0.35, 2.5);
       ctx.beginPath();
-      ctx.moveTo(-carLen/2 + rx, -carWid/2);
-      ctx.lineTo( carLen/2 - rx, -carWid/2);
-      ctx.arcTo(  carLen/2, -carWid/2, carLen/2, 0, rx);
-      ctx.lineTo( carLen/2,  carWid/2 - rx);
-      ctx.arcTo(  carLen/2,  carWid/2, 0, carWid/2, rx);
-      ctx.lineTo(-carLen/2 + rx,  carWid/2);
-      ctx.arcTo( -carLen/2,  carWid/2, -carLen/2, 0, rx);
-      ctx.lineTo(-carLen/2, -carWid/2 + rx);
-      ctx.arcTo( -carLen/2, -carWid/2, 0, -carWid/2, rx);
+      ctx.moveTo(-carLen / 2 + rx, -carWid / 2);
+      ctx.lineTo(carLen / 2 - rx, -carWid / 2);
+      ctx.arcTo(carLen / 2, -carWid / 2, carLen / 2, 0, rx);
+      ctx.lineTo(carLen / 2, carWid / 2 - rx);
+      ctx.arcTo(carLen / 2, carWid / 2, 0, carWid / 2, rx);
+      ctx.lineTo(-carLen / 2 + rx, carWid / 2);
+      ctx.arcTo(-carLen / 2, carWid / 2, -carLen / 2, 0, rx);
+      ctx.lineTo(-carLen / 2, -carWid / 2 + rx);
+      ctx.arcTo(-carLen / 2, -carWid / 2, 0, -carWid / 2, rx);
       ctx.closePath(); ctx.fill();
       ctx.shadowBlur = 0;
       ctx.restore();
@@ -2206,7 +2206,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
     const resize = () => {
       const p = cv.parentElement;
       if (!p) return;
-      cv.width  = p.clientWidth;
+      cv.width = p.clientWidth;
       cv.height = p.clientHeight || Math.round(p.clientWidth * 0.56);
     };
     resize();
@@ -2231,7 +2231,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
     if (!playing) return;
     function tick(now) {
       if (!syncRef.current.lastWall) syncRef.current.lastWall = now;
-      const dt  = (now - syncRef.current.lastWall) / 1000;
+      const dt = (now - syncRef.current.lastWall) / 1000;
       syncRef.current.lastWall = now;
       const next = Math.min(sharedTRef.current + dt * speed, SIM_DURATION);
 
@@ -2273,15 +2273,15 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
   const congestionLabel = liveCount >= CONGESTION_THRESHOLD * 1.5
     ? 'SEVERE'
     : liveCount >= CONGESTION_THRESHOLD
-    ? 'MODERATE'
-    : 'FREE FLOW';
+      ? 'MODERATE'
+      : 'FREE FLOW';
   const congestionColor = congestionLabel === 'SEVERE'
     ? '#ef4444'
     : congestionLabel === 'MODERATE'
-    ? '#f59e0b'
-    : '#22c55e';
+      ? '#f59e0b'
+      : '#22c55e';
 
-  const tFloor  = Math.floor(sharedT);
+  const tFloor = Math.floor(sharedT);
   const simVehicles = simData
     ? ((simData._framesIdx || {})[tFloor] || []).length
     : 0;
@@ -2298,10 +2298,10 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
           'Real detection feed (left) · SUMO digital twin (right) · Shared playback clock'
         )
       ),
-      e('div', { style: { display:'flex', gap:'8px', alignItems:'center', flexWrap:'wrap' } },
+      e('div', { style: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' } },
         e('span', { className: 'badge-node-status green' },
           e('i', { className: 'fa-solid fa-circle' }), ' YOLOv8n + ByteTrack'),
-        e('span', { className: 'badge-node-status', style: { background:'rgba(56,189,248,0.12)', color:'#38bdf8', border:'1px solid rgba(56,189,248,0.3)' } },
+        e('span', { className: 'badge-node-status', style: { background: 'rgba(56,189,248,0.12)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.3)' } },
           e('i', { className: 'fa-solid fa-circle' }), ' SUMO 1.27.1 TraCI')
       )
     ),
@@ -2315,7 +2315,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
           e('span', { className: 'live-pane-title' },
             e('i', { className: 'fa-solid fa-camera' }), ' Real-World Feed'
           ),
-          e('span', { className: 'live-tag', style: { background:'rgba(239,68,68,0.18)', color:'#ef4444', border:'1px solid rgba(239,68,68,0.35)' } },
+          e('span', { className: 'live-tag', style: { background: 'rgba(239,68,68,0.18)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.35)' } },
             e('i', { className: 'fa-solid fa-circle pulsing-dot' }), ' LIVE DETECTION'
           )
         ),
@@ -2325,13 +2325,13 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
           e('video', {
             ref: videoRef,
             src: '/api/sumo/video-stream',
-            style: { width:'100%', height:'100%', objectFit:'cover', display:'block' },
+            style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' },
             muted: true,
             playsInline: true,
             loop: true,
             preload: 'auto',
             onLoadedData: () => setVideoReady(true),
-            onCanPlay:    () => setVideoReady(true),
+            onCanPlay: () => setVideoReady(true),
           }),
           e('canvas', {
             ref: overlayRef,
@@ -2368,7 +2368,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
           e('span', { className: 'live-pane-title' },
             e('i', { className: 'fa-solid fa-microchip' }), ' Digital Twin Simulated View'
           ),
-          e('span', { className: 'live-tag', style: { background:'rgba(56,189,248,0.12)', color:'#38bdf8', border:'1px solid rgba(56,189,248,0.3)' } },
+          e('span', { className: 'live-tag', style: { background: 'rgba(56,189,248,0.12)', color: '#38bdf8', border: '1px solid rgba(56,189,248,0.3)' } },
             'SUMO TraCI'
           )
         ),
@@ -2385,9 +2385,9 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
             const state = rec.phase_state || '';
             const green = (state.match(/G/g) || []).length >= Math.ceil(state.length / 2);
             return e('div', { className: 'live-tls-badge', style: { background: green ? 'rgba(34,197,94,0.18)' : 'rgba(239,68,68,0.18)', borderColor: green ? '#22c55e' : '#ef4444', color: green ? '#22c55e' : '#ef4444' } },
-              e('div', { style: { width:10, height:10, borderRadius:'50%', background: green ? '#22c55e' : '#ef4444', boxShadow: `0 0 8px ${green ? '#22c55e' : '#ef4444'}` } }),
+              e('div', { style: { width: 10, height: 10, borderRadius: '50%', background: green ? '#22c55e' : '#ef4444', boxShadow: `0 0 8px ${green ? '#22c55e' : '#ef4444'}` } }),
               e('span', null, green ? 'GREEN PHASE' : 'RED PHASE'),
-              e('span', { style: { opacity:0.75, marginLeft:4 } }, `${Math.round(rec.seconds_until_switch)}s`)
+              e('span', { style: { opacity: 0.75, marginLeft: 4 } }, `${Math.round(rec.seconds_until_switch)}s`)
             );
           })(),
           e('div', { className: 'live-stat-overlay top-left' },
@@ -2419,7 +2419,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
         }
       }, e('i', { className: `fa-solid ${playing ? 'fa-pause' : 'fa-play'}` })),
 
-      e('div', { style: { display:'flex', alignItems:'center', gap:'6px', flex:1, minWidth:0 } },
+      e('div', { style: { display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 } },
         e('span', { className: 'sumo-time-display' }, `${tFloor}s`),
         e('input', {
           type: 'range', className: 'sumo-scrubber',
@@ -2431,11 +2431,11 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
             if (videoRef.current) videoRef.current.currentTime = simToVideo(newT) % VIDEO_DURATION;
           }
         }),
-        e('span', { style: { fontSize:'0.73rem', color:'var(--text-dim)', fontFamily:'var(--font-mono)', whiteSpace:'nowrap' } },
+        e('span', { style: { fontSize: '0.73rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' } },
           `/${SIM_DURATION}s sim`)
       ),
 
-      e('div', { style: { display:'flex', gap:'4px', alignItems:'center' } },
+      e('div', { style: { display: 'flex', gap: '4px', alignItems: 'center' } },
         ...[1, 4, 16].map(s =>
           e('button', {
             key: s, id: `liveSpeed${s}x`,
@@ -2445,8 +2445,8 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
         )
       ),
 
-      e('span', { style: { fontSize:'0.7rem', color:'var(--text-dim)', whiteSpace:'nowrap' } },
-        e('i', { className: 'fa-solid fa-link', style: { marginRight:4 } }),
+      e('span', { style: { fontSize: '0.7rem', color: 'var(--text-dim)', whiteSpace: 'nowrap' } },
+        e('i', { className: 'fa-solid fa-link', style: { marginRight: 4 } }),
         'Synced clocks'
       )
     )
@@ -2459,36 +2459,36 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
 function SumoTab() {
 
   // ── Data state ────────────────────────────────────────────────────────────
-  const [simData,    setSimData]    = useState(null);
-  const [loadError,  setLoadError]  = useState(null);
-  const [loading,    setLoading]    = useState(true);
+  const [simData, setSimData] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // ── Playback state ────────────────────────────────────────────────────────
-  const [playing,    setPlaying]    = useState(false);
-  const [simTime,    setSimTime]    = useState(0);
-  const [speed,      setSpeed]      = useState(1);
-  const [maxTime,    setMaxTime]    = useState(800);
+  const [playing, setPlaying] = useState(false);
+  const [simTime, setSimTime] = useState(0);
+  const [speed, setSpeed] = useState(1);
+  const [maxTime, setMaxTime] = useState(800);
   const [activeLabels, setActiveLabels] = useState([]);
 
   // ── Refs (mutable, no re-render) ──────────────────────────────────────────
-  const canvasRef        = useRef(null);
-  const rafRef           = useRef(null);
-  const lastWallRef      = useRef(null);
-  const simTimeRef       = useRef(0);
-  const simDataRef       = useRef(null);
+  const canvasRef = useRef(null);
+  const rafRef = useRef(null);
+  const lastWallRef = useRef(null);
+  const simTimeRef = useRef(0);
+  const simDataRef = useRef(null);
 
   // Data indices
-  const framesIdxRef     = useRef({});
-  const vehicleTimeIdx   = useRef({});
-  const rerouteIdxRef    = useRef({});
-  const edgeByIdRef      = useRef({});
+  const framesIdxRef = useRef({});
+  const vehicleTimeIdx = useRef({});
+  const rerouteIdxRef = useRef({});
+  const edgeByIdRef = useRef({});
 
   // Camera
-  const cameraRef        = useRef({ cx: 79.086, cy: 21.145, scale: 185000 });
-  const dragRef          = useRef({ active: false, startX: 0, startY: 0, startCx: 0, startCy: 0 });
+  const cameraRef = useRef({ cx: 79.086, cy: 21.145, scale: 185000 });
+  const dragRef = useRef({ active: false, startX: 0, startY: 0, startCx: 0, startCy: 0 });
 
   // Per-vehicle visual state
-  const vehicleStateRef  = useRef({});
+  const vehicleStateRef = useRef({});
   const rerouteOverlaysRef = useRef([]);
 
   // ── Load data ─────────────────────────────────────────────────────────────
@@ -2543,7 +2543,7 @@ function SumoTab() {
     function resize() {
       const cv = canvasRef.current;
       if (!cv || !cv.parentElement) return;
-      cv.width  = cv.parentElement.clientWidth;
+      cv.width = cv.parentElement.clientWidth;
       cv.height = Math.round(cv.parentElement.clientWidth * 0.54);
       if (simDataRef.current) renderFrame(simTimeRef.current);
     }
@@ -2559,15 +2559,15 @@ function SumoTab() {
     const onWheel = ev => {
       ev.preventDefault();
       const rect = cv.getBoundingClientRect();
-      const mx = (ev.clientX - rect.left) * (cv.width  / rect.width);
-      const my = (ev.clientY - rect.top)  * (cv.height / rect.height);
+      const mx = (ev.clientX - rect.left) * (cv.width / rect.width);
+      const my = (ev.clientY - rect.top) * (cv.height / rect.height);
       const cam = cameraRef.current;
       const fac = ev.deltaY < 0 ? 1.14 : 1 / 1.14;
-      const ns  = Math.max(40000, Math.min(3000000, cam.scale * fac));
+      const ns = Math.max(40000, Math.min(3000000, cam.scale * fac));
       // Zoom around mouse world point
-      const wLon = cam.cx + (mx - cv.width  / 2) / cam.scale;
+      const wLon = cam.cx + (mx - cv.width / 2) / cam.scale;
       const wLat = cam.cy - (my - cv.height / 2) / cam.scale;
-      cam.cx = wLon - (mx - cv.width  / 2) / ns;
+      cam.cx = wLon - (mx - cv.width / 2) / ns;
       cam.cy = wLat + (my - cv.height / 2) / ns;
       cam.scale = ns;
       renderFrame(simTimeRef.current);
@@ -2579,10 +2579,10 @@ function SumoTab() {
   // ── Coordinate transform ──────────────────────────────────────────────────
   function toCanvas(lon, lat) {
     const cam = cameraRef.current;
-    const cv  = canvasRef.current;
+    const cv = canvasRef.current;
     if (!cv) return [0, 0];
     return [
-      (lon - cam.cx) * cam.scale + cv.width  / 2,
+      (lon - cam.cx) * cam.scale + cv.width / 2,
       -(lat - cam.cy) * cam.scale + cv.height / 2
     ];
   }
@@ -2595,8 +2595,8 @@ function SumoTab() {
   // ── Sub-frame interpolation ────────────────────────────────────────────────
   function getVehiclesAt(t) {
     const t0 = Math.floor(t), t1 = t0 + 1;
-    const alpha  = t - t0;
-    const vti    = vehicleTimeIdx.current;
+    const alpha = t - t0;
+    const vti = vehicleTimeIdx.current;
     const f0list = framesIdxRef.current[t0] || [];
     return f0list.map(f0 => {
       if (alpha < 0.001) return { ...f0 };
@@ -2604,9 +2604,9 @@ function SumoTab() {
       if (!f1) return { ...f0 };
       return {
         vehicle_id: f0.vehicle_id,
-        x:      f0.x     + (f1.x     - f0.x)     * alpha,
-        y:      f0.y     + (f1.y     - f0.y)     * alpha,
-        speed:  f0.speed + (f1.speed - f0.speed) * alpha,
+        x: f0.x + (f1.x - f0.x) * alpha,
+        y: f0.y + (f1.y - f0.y) * alpha,
+        speed: f0.speed + (f1.speed - f0.speed) * alpha,
         edge_id: f0.edge_id
       };
     });
@@ -2614,7 +2614,7 @@ function SumoTab() {
 
   // ── Main canvas render ─────────────────────────────────────────────────────
   function renderFrame(t) {
-    const cv   = canvasRef.current;
+    const cv = canvasRef.current;
     const data = simDataRef.current;
     if (!cv || !data) return [];
     const ctx = cv.getContext('2d');
@@ -2630,14 +2630,14 @@ function SumoTab() {
       ctx.strokeStyle = 'rgba(255,255,255,0.016)';
       ctx.lineWidth = 1; ctx.setLineDash([]);
       const gd = 0.0005;
-      for (let lon = Math.floor((cam.cx - W/cam.scale/2) / gd) * gd;
-               lon < cam.cx + W/cam.scale/2 + gd; lon += gd) {
+      for (let lon = Math.floor((cam.cx - W / cam.scale / 2) / gd) * gd;
+        lon < cam.cx + W / cam.scale / 2 + gd; lon += gd) {
         const [gx] = toCanvas(lon, cam.cy);
         if (gx < -1 || gx > W + 1) continue;
         ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
       }
-      for (let lat = Math.floor((cam.cy - H/cam.scale/2) / gd) * gd;
-               lat < cam.cy + H/cam.scale/2 + gd; lat += gd) {
+      for (let lat = Math.floor((cam.cy - H / cam.scale / 2) / gd) * gd;
+        lat < cam.cy + H / cam.scale / 2 + gd; lat += gd) {
         const [, gy] = toCanvas(cam.cx, lat);
         if (gy < -1 || gy > H + 1) continue;
         ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
@@ -2746,7 +2746,7 @@ function SumoTab() {
         ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
         for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
         ctx.shadowColor = `rgba(251,191,36,${(alpha * 0.55).toFixed(3)})`;
-        ctx.shadowBlur  = 7;
+        ctx.shadowBlur = 7;
         ctx.strokeStyle = `rgba(251,191,36,${alpha.toFixed(3)})`;
         ctx.lineWidth = 3.5; ctx.setLineDash([]); ctx.lineCap = 'round'; ctx.stroke();
         ctx.shadowBlur = 0;
@@ -2769,7 +2769,7 @@ function SumoTab() {
         rerouteOverlaysRef.current.push({
           id: eid, vid: ev.vehicle_id,
           origCoords: EB[ev.old_edge] ? EB[ev.old_edge].coords : null,
-          newCoords:  EB[ev.new_edge] ? EB[ev.new_edge].coords : null,
+          newCoords: EB[ev.new_edge] ? EB[ev.new_edge].coords : null,
           expire: nowMs + 5000, startT: nowMs
         });
       }
@@ -2784,9 +2784,9 @@ function SumoTab() {
 
     // Update heading + trail
     vehicles.forEach(f => {
-      const prev  = vehicleStateRef.current[f.vehicle_id] || {};
+      const prev = vehicleStateRef.current[f.vehicle_id] || {};
       let heading = prev.heading || 0;
-      let trail   = prev.trail   || [];
+      let trail = prev.trail || [];
 
       if (prev.lastX !== undefined) {
         const [px, py] = toCanvas(prev.lastX, prev.lastY);
@@ -2809,8 +2809,8 @@ function SumoTab() {
       if (!vs || vs.trail.length < 2) return;
       const rgb = f.speed > 8 ? '34,197,94' : f.speed > 3 ? '229,193,88' : '239,68,68';
       for (let i = 1; i < vs.trail.length; i++) {
-        const [x0, y0] = toCanvas(vs.trail[i-1].x, vs.trail[i-1].y);
-        const [x1, y1] = toCanvas(vs.trail[i].x,   vs.trail[i].y);
+        const [x0, y0] = toCanvas(vs.trail[i - 1].x, vs.trail[i - 1].y);
+        const [x1, y1] = toCanvas(vs.trail[i].x, vs.trail[i].y);
         ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
         ctx.strokeStyle = `rgba(${rgb},${((i / vs.trail.length) * 0.40).toFixed(3)})`;
         ctx.lineWidth = 2;
@@ -2831,8 +2831,8 @@ function SumoTab() {
     });
 
     // ── Car rectangles ───────────────────────────────────────────────────────
-    const scl    = cam.scale;
-    const carLen = Math.max(7,   4.5 * scl / 111000);
+    const scl = cam.scale;
+    const carLen = Math.max(7, 4.5 * scl / 111000);
     const carWid = Math.max(3.5, 2.0 * scl / 111000);
 
     vehicles.forEach(f => {
@@ -2842,8 +2842,8 @@ function SumoTab() {
 
       // Perpendicular offset to separate stacked cars
       const offIdx = cellOff[f.vehicle_id];
-      const perpX  = offIdx * Math.cos(heading + Math.PI / 2) * (carWid + 1.2);
-      const perpY  = offIdx * Math.sin(heading + Math.PI / 2) * (carWid + 1.2);
+      const perpX = offIdx * Math.cos(heading + Math.PI / 2) * (carWid + 1.2);
+      const perpY = offIdx * Math.sin(heading + Math.PI / 2) * (carWid + 1.2);
       const [vx0, vy0] = toCanvas(f.x, f.y);
       const vx = vx0 + perpX, vy = vy0 + perpY;
       if (vx < -20 || vx > W + 20 || vy < -20 || vy > H + 20) return;
@@ -2853,7 +2853,7 @@ function SumoTab() {
       if (isRerouting) { fillHex = '#ef4444'; glowRgb = '239,68,68'; }
       else if (spd > 8) { fillHex = '#22c55e'; glowRgb = '34,197,94'; }
       else if (spd > 3) { fillHex = '#e5c158'; glowRgb = '229,193,88'; }
-      else              { fillHex = '#ef4444'; glowRgb = '239,68,68'; }
+      else { fillHex = '#ef4444'; glowRgb = '239,68,68'; }
 
       // Brightness pulse during reroute (first 1.6 s)
       let pulseMult = 1;
@@ -2869,29 +2869,29 @@ function SumoTab() {
 
       if (isRerouting || spd <= 3) {
         ctx.shadowColor = `rgba(${glowRgb},0.85)`;
-        ctx.shadowBlur  = isRerouting ? 15 : 6;
+        ctx.shadowBlur = isRerouting ? 15 : 6;
       }
 
       // Rounded-rectangle car body
       const rx = Math.min(carWid * 0.35, 2.8);
       ctx.fillStyle = fillHex;
       ctx.beginPath();
-      ctx.moveTo(-carLen/2 + rx, -carWid/2);
-      ctx.lineTo( carLen/2 - rx, -carWid/2);
-      ctx.arcTo(  carLen/2, -carWid/2,  carLen/2, -carWid/2 + rx, rx);
-      ctx.lineTo( carLen/2,  carWid/2 - rx);
-      ctx.arcTo(  carLen/2,  carWid/2,  carLen/2 - rx, carWid/2, rx);
-      ctx.lineTo(-carLen/2 + rx,  carWid/2);
-      ctx.arcTo( -carLen/2,  carWid/2, -carLen/2, carWid/2 - rx, rx);
-      ctx.lineTo(-carLen/2, -carWid/2 + rx);
-      ctx.arcTo( -carLen/2, -carWid/2, -carLen/2 + rx, -carWid/2, rx);
+      ctx.moveTo(-carLen / 2 + rx, -carWid / 2);
+      ctx.lineTo(carLen / 2 - rx, -carWid / 2);
+      ctx.arcTo(carLen / 2, -carWid / 2, carLen / 2, -carWid / 2 + rx, rx);
+      ctx.lineTo(carLen / 2, carWid / 2 - rx);
+      ctx.arcTo(carLen / 2, carWid / 2, carLen / 2 - rx, carWid / 2, rx);
+      ctx.lineTo(-carLen / 2 + rx, carWid / 2);
+      ctx.arcTo(-carLen / 2, carWid / 2, -carLen / 2, carWid / 2 - rx, rx);
+      ctx.lineTo(-carLen / 2, -carWid / 2 + rx);
+      ctx.arcTo(-carLen / 2, -carWid / 2, -carLen / 2 + rx, -carWid / 2, rx);
       ctx.closePath();
       ctx.fill();
 
       // Windshield glint
       if (carLen > 9) {
-        ctx.shadowBlur  = 0;
-        ctx.fillStyle   = 'rgba(255,255,255,0.20)';
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(255,255,255,0.20)';
         ctx.fillRect(carLen * 0.06, -carWid * 0.28, carLen * 0.22, carWid * 0.56);
       }
       ctx.shadowBlur = 0;
@@ -2920,11 +2920,13 @@ function SumoTab() {
           const newLabels = evts.map(ev => {
             const vs = vehicleStateRef.current[ev.vehicle_id];
             const [cx, cy] = vs ? toCanvas(vs.lastX, vs.lastY) : [null, null];
-            return { id: `${ev.vehicle_id}-${tInt}`, canvasX: cx, canvasY: cy,
-                     vehicle_id: ev.vehicle_id, expire: ts + 4000 };
+            return {
+              id: `${ev.vehicle_id}-${tInt}`, canvasX: cx, canvasY: cy,
+              vehicle_id: ev.vehicle_id, expire: ts + 4000
+            };
           });
           setActiveLabels(prev => {
-            const alive  = prev.filter(l => l.expire > ts);
+            const alive = prev.filter(l => l.expire > ts);
             const newIds = new Set(newLabels.map(l => l.id));
             return [...alive.filter(l => !newIds.has(l.id)), ...newLabels];
           });
@@ -2954,8 +2956,10 @@ function SumoTab() {
   // ── Camera: drag to pan ───────────────────────────────────────────────────
   function onMouseDown(ev) {
     const cam = cameraRef.current;
-    dragRef.current = { active: true, startX: ev.clientX, startY: ev.clientY,
-                        startCx: cam.cx, startCy: cam.cy };
+    dragRef.current = {
+      active: true, startX: ev.clientX, startY: ev.clientY,
+      startCx: cam.cx, startCy: cam.cy
+    };
   }
   function onMouseMove(ev) {
     if (!dragRef.current.active) return;
@@ -2974,10 +2978,10 @@ function SumoTab() {
   }
 
   // ── Derived stats ─────────────────────────────────────────────────────────
-  const tFloor      = Math.floor(simTime);
-  const curFrames   = simData ? (framesIdxRef.current[tFloor] || framesIdxRef.current[tFloor - 1] || []) : [];
+  const tFloor = Math.floor(simTime);
+  const curFrames = simData ? (framesIdxRef.current[tFloor] || framesIdxRef.current[tFloor - 1] || []) : [];
   const liveVehicles = curFrames.length;
-  const avgSpeedKmh  = curFrames.length > 0
+  const avgSpeedKmh = curFrames.length > 0
     ? (curFrames.reduce((s, f) => s + f.speed, 0) / curFrames.length * 3.6).toFixed(1)
     : '0.0';
   const totalReroutes = simData ? simData.reroute_events.length : 0;
@@ -2987,19 +2991,21 @@ function SumoTab() {
     e('div', { className: 'sumo-loading-state' },
       e('i', { className: 'fa-solid fa-circle-nodes spin-icon' }),
       e('h3', null, 'Loading SUMO Simulation Data…'),
-      e('p',  null, 'Fetching sim_output_clean.json from /api/sumo/sim-data')
+      e('p', null, 'Fetching sim_output_clean.json from /api/sumo/sim-data')
     )
   );
   if (loadError) return e('section', { className: 'tab-panel active' },
     e('div', { className: 'sumo-loading-state' },
-      e('i', { className: 'fa-solid fa-triangle-exclamation',
-               style: { fontSize: '2.5rem', color: '#ef4444' } }),
+      e('i', {
+        className: 'fa-solid fa-triangle-exclamation',
+        style: { fontSize: '2.5rem', color: '#ef4444' }
+      }),
       e('h3', null, 'Failed to Load Simulation Data'),
-      e('p',  null, `${loadError} — ensure sitabuldi_sim.py and clean_output.py have been run.`)
+      e('p', null, `${loadError} — ensure sitabuldi_sim.py and clean_output.py have been run.`)
     )
   );
 
-  const meta        = simData.meta;
+  const meta = simData.meta;
   const rerouteEvents = simData.reroute_events;
 
   return e('section', { className: 'tab-panel active' },
@@ -3014,7 +3020,7 @@ function SumoTab() {
           `${meta.total_vehicles} vehicles · ` +
           `junction ${meta.junction_lon.toFixed(5)}°E, ${meta.junction_lat.toFixed(5)}°N`)
       ),
-      e('div', { style: { display:'flex', gap:'10px', flexWrap:'wrap', alignItems:'center' } },
+      e('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' } },
         e('span', { className: 'badge-node-status green' },
           e('i', { className: 'fa-solid fa-circle-check' }), ' SUMO v1.27.1 TraCI'),
         e('span', { className: 'tag-sim live' },
@@ -3111,7 +3117,7 @@ function SumoTab() {
             min: 0, max: maxTime, step: 1, value: tFloor,
             onChange: ev => { setPlaying(false); setSimTime(Number(ev.target.value)); }
           }),
-          e('span', { style: { fontSize:'0.75rem', color:'var(--text-dim)', fontFamily:'var(--font-mono)' } },
+          e('span', { style: { fontSize: '0.75rem', color: 'var(--text-dim)', fontFamily: 'var(--font-mono)' } },
             `/${maxTime}s`),
           ...[1, 4, 16].map(s =>
             e('button', {
@@ -3120,7 +3126,7 @@ function SumoTab() {
               onClick: () => setSpeed(s)
             }, `${s}×`)
           ),
-          e('span', { style: { fontSize:'0.71rem', color:'var(--text-dim)', marginLeft:'6px', opacity:0.7 } },
+          e('span', { style: { fontSize: '0.71rem', color: 'var(--text-dim)', marginLeft: '6px', opacity: 0.7 } },
             'scroll=zoom · drag=pan')
         )
       ),
@@ -3132,27 +3138,33 @@ function SumoTab() {
           e('h4', null, e('i', { className: 'fa-solid fa-circle-info text-gold' }), ' Legend'),
           e('div', { className: 'sumo-legend-items' },
             e('div', { className: 'sumo-legend-row' },
-              e('span', { className: 'sumo-legend-dot', style: { background:'#22c55e', color:'#22c55e' } }),
+              e('span', { className: 'sumo-legend-dot', style: { background: '#22c55e', color: '#22c55e' } }),
               'Free-flow (>29 km/h)'),
             e('div', { className: 'sumo-legend-row' },
-              e('span', { className: 'sumo-legend-dot', style: { background:'#e5c158', color:'#e5c158' } }),
+              e('span', { className: 'sumo-legend-dot', style: { background: '#e5c158', color: '#e5c158' } }),
               'Slow (11–29 km/h)'),
             e('div', { className: 'sumo-legend-row' },
-              e('span', { className: 'sumo-legend-dot', style: { background:'#ef4444', color:'#ef4444' } }),
+              e('span', { className: 'sumo-legend-dot', style: { background: '#ef4444', color: '#ef4444' } }),
               'Queued / rerouting'),
             e('div', { className: 'sumo-legend-row' },
               e('span', {
-                style: { width:'24px', height:'2px', borderTop:'2px dashed rgba(212,175,55,0.85)',
-                         flexShrink:0, display:'inline-block' }
+                style: {
+                  width: '24px', height: '2px', borderTop: '2px dashed rgba(212,175,55,0.85)',
+                  flexShrink: 0, display: 'inline-block'
+                }
               }), 'Planned (rerouted-from) edge'),
             e('div', { className: 'sumo-legend-row' },
               e('span', {
-                style: { width:'24px', height:'3px', background:'#fbbf24', borderRadius:'2px',
-                         flexShrink:0, boxShadow:'0 0 5px rgba(251,191,36,0.7)' }
+                style: {
+                  width: '24px', height: '3px', background: '#fbbf24', borderRadius: '2px',
+                  flexShrink: 0, boxShadow: '0 0 5px rgba(251,191,36,0.7)'
+                }
               }), 'Actual (rerouted-to) edge'),
             e('div', { className: 'sumo-legend-row' },
-              e('span', { className: 'sumo-legend-dot',
-                          style: { background:'#d4af37', color:'#d4af37', borderRadius:'3px' } }),
+              e('span', {
+                className: 'sumo-legend-dot',
+                style: { background: '#d4af37', color: '#d4af37', borderRadius: '3px' }
+              }),
               'Sitabuldi Junction')
           )
         ),
@@ -3163,7 +3175,7 @@ function SumoTab() {
             ` Reroute Events (${rerouteEvents.length} genuine)`),
           e('div', { className: 'sumo-event-scroll' },
             rerouteEvents.map((ev, idx) => {
-              const evT      = Math.floor(ev.time);
+              const evT = Math.floor(ev.time);
               const isActive = Math.abs(tFloor - evT) <= 2;
               return e('div', {
                 key: idx,

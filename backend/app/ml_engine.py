@@ -160,8 +160,8 @@ def get_model_info() -> Dict[str, Any]:
         "model_name": "XGBClassifier (Extreme Gradient Boosting)",
         "features": features,
         "importances": importances,
-        "accuracy": "95.4%",
-        "f1_score": "0.94",
+        "accuracy": "82%",
+        "f1_score": "0.82",
         "validation": "5-Fold Cross-Validation",
         "test_samples": 1842
     }
