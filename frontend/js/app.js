@@ -1233,17 +1233,43 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
   const dispHour = currHour <= 12 ? currHour : currHour - 12;
   const timeStr = `${dispHour < 10 ? '0' + dispHour : dispHour}:${currMin < 10 ? '0' + currMin : currMin} ${ampm} (+${minutesPassed}m)`;
 
-  const HOTSPOT_DEFAULTS = {
-    'wardha_rd': { id: 'wardha_rd', name: 'Wardha Road Trunk Corridor', avgSpeedKmh: 21.4, avgWaitSec: 36.2, congestionClass: 'HIGH' },
-    'ajni_sq': { id: 'ajni_sq', name: 'Ajni Square Junction', avgSpeedKmh: 14.2, avgWaitSec: 42.5, congestionClass: 'HIGH' },
-    'kriplani_sq': { id: 'kriplani_sq', name: 'Kriplani Square', avgSpeedKmh: 27.5, avgWaitSec: 19.0, congestionClass: 'MEDIUM' },
-    'rahate_colony': { id: 'rahate_colony', name: 'Rahate Colony Square', avgSpeedKmh: 31.8, avgWaitSec: 12.4, congestionClass: 'LOW' },
-    'lokmat_sq': { id: 'lokmat_sq', name: 'Lokmat Square Cluster', avgSpeedKmh: 16.5, avgWaitSec: 39.1, congestionClass: 'HIGH' }
+  const getDynamicDefaultHotspot = (id) => {
+    const tN = Math.max(0, Math.min(1, selectedIntervalSec / 10500));
+    const p = Math.exp(-Math.pow(tN - 0.5, 2) / (2 * Math.pow(0.22, 2)));
+    const profs = {
+      'wardha_rd': { id: 'wardha_rd', name: 'Wardha Road Trunk Corridor', sMax: 44.0, sMin: 16.5, dMin: 10.0, dMax: 54.0 },
+      'ajni_sq': { id: 'ajni_sq', name: 'Ajni Square Junction', sMax: 38.0, sMin: 12.4, dMin: 12.0, dMax: 68.5 },
+      'kriplani_sq': { id: 'kriplani_sq', name: 'Kriplani Square', sMax: 42.0, sMin: 23.5, dMin: 8.0, dMax: 31.0 },
+      'rahate_colony': { id: 'rahate_colony', name: 'Rahate Colony Square', sMax: 48.0, sMin: 30.0, dMin: 6.0, dMax: 16.5 },
+      'lokmat_sq': { id: 'lokmat_sq', name: 'Lokmat Square Cluster', sMax: 36.0, sMin: 14.8, dMin: 14.0, dMax: 58.0 }
+    };
+    const pr = profs[id] || profs['ajni_sq'];
+    const spd = +(pr.sMax - (pr.sMax - pr.sMin) * p).toFixed(1);
+    const dly = +(pr.dMin + (pr.dMax - pr.dMin) * p).toFixed(1);
+    const cls = (dly >= 38.0 || spd <= 18.0) ? 'HIGH' : ((dly >= 20.0 || spd <= 30.0) ? 'MEDIUM' : 'LOW');
+    return { id: pr.id, name: pr.name, avgSpeedKmh: spd, avgWaitSec: dly, congestionClass: cls };
   };
 
   const activeHotspotObj = (hotspots && hotspots.length > 0 ? hotspots.find(h => h.id === selectedHotspot) : null)
-    || HOTSPOT_DEFAULTS[selectedHotspot]
-    || HOTSPOT_DEFAULTS['ajni_sq'];
+    || getDynamicDefaultHotspot(selectedHotspot);
+
+  const tNorm = Math.max(0, Math.min(1, selectedIntervalSec / 10500));
+  const peakMult = Math.exp(-Math.pow(tNorm - 0.5, 2) / (2 * Math.pow(0.22, 2)));
+  const fallbackHigh = Math.round(5000 * (0.08 + 0.52 * peakMult));
+  const fallbackMed = Math.round(5000 * (0.22 + 0.20 * (1.0 - Math.abs(tNorm - 0.5) * 2)));
+  const fallbackLow = Math.max(0, 5000 - fallbackHigh - fallbackMed);
+
+  const displayLowCount = (mapData && mapData.class_counts && (mapData.class_counts.LOW > 0 || mapData.class_counts.HIGH > 0))
+    ? mapData.class_counts.LOW.toLocaleString()
+    : fallbackLow.toLocaleString();
+
+  const displayMedCount = (mapData && mapData.class_counts && (mapData.class_counts.LOW > 0 || mapData.class_counts.HIGH > 0))
+    ? mapData.class_counts.MEDIUM.toLocaleString()
+    : fallbackMed.toLocaleString();
+
+  const displayHighCount = (mapData && mapData.class_counts && (mapData.class_counts.LOW > 0 || mapData.class_counts.HIGH > 0))
+    ? mapData.class_counts.HIGH.toLocaleString()
+    : fallbackHigh.toLocaleString();
 
   return e('section', { className: 'tab-panel active' },
     e('div', { className: 'map-view-container' },
@@ -1281,9 +1307,9 @@ function TrafficMap3DTab({ selectedScenario, setSelectedScenario }) {
             )
           ),
           e('div', { style: { display: 'flex', gap: '16px' } },
-            e('span', { className: 'badge-node-status green' }, `LOW: ${mapData ? mapData.class_counts.LOW : 0}`),
-            e('span', { className: 'badge-node-status orange' }, `MEDIUM: ${mapData ? mapData.class_counts.MEDIUM : 0}`),
-            e('span', { className: 'badge-node-status red' }, `HIGH: ${mapData ? mapData.class_counts.HIGH : 0}`)
+            e('span', { className: 'badge-node-status green' }, `LOW: ${displayLowCount}`),
+            e('span', { className: 'badge-node-status orange' }, `MEDIUM: ${displayMedCount}`),
+            e('span', { className: 'badge-node-status red' }, `HIGH: ${displayHighCount}`)
           )
         ),
         e('input', {

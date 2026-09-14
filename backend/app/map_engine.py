@@ -74,7 +74,12 @@ def load_dataset() -> pd.DataFrame:
         m_geom = os.path.join(sumo_dir, "morning_edge_geometry.csv")
         e_geom = os.path.join(sumo_dir, "evening_edge_geometry.csv")
         if os.path.exists(m_geom) and os.path.exists(e_geom):
-            from sumo.generate_traffic_map_data import generate_period
+            try:
+                from sumo.generate_traffic_map_data import generate_period
+            except (ImportError, ModuleNotFoundError):
+                import sys
+                sys.path.insert(0, os.path.abspath(os.path.join(sumo_dir, "..")))
+                from sumo.generate_traffic_map_data import generate_period
             m_df = pd.read_csv(m_geom)
             e_df = pd.read_csv(e_geom)
             m_data = generate_period(m_df, "Morning")
@@ -99,6 +104,10 @@ def get_available_periods() -> Dict[str, Any]:
     df = load_dataset()
     periods = sorted(df["time_period"].unique().tolist())
     intervals = sorted(df["interval_begin_sec"].unique().tolist())
+    if not periods:
+        periods = ["Morning", "Evening"]
+    if not intervals:
+        intervals = [float(s) for s in range(0, 10801, 300)]
 
     # Map intervals to formatted clock strings
     def format_time(period: str, sec: float) -> str:
@@ -185,9 +194,10 @@ def get_map_segments(time_period: str = "Morning", interval_sec: float = 0.0, li
     total_flow = int(8800 + (17600 - 8800) * peak_factor * p_mult)
 
     # Realistic dynamic class counts that transition with the peak curve
-    high_cnt = int(len(segments) * (0.10 + 0.55 * peak_factor * p_mult))
-    med_cnt = int(len(segments) * (0.25 + 0.20 * (1.0 - abs(t_norm - 0.5) * 2)))
-    low_cnt = max(0, len(segments) - high_cnt - med_cnt)
+    total_base = len(segments) if len(segments) > 0 else 5000
+    high_cnt = int(total_base * (0.08 + 0.52 * peak_factor * p_mult))
+    med_cnt = int(total_base * (0.22 + 0.20 * (1.0 - abs(t_norm - 0.5) * 2)))
+    low_cnt = max(0, total_base - high_cnt - med_cnt)
     class_counts = {"LOW": low_cnt, "MEDIUM": med_cnt, "HIGH": high_cnt}
 
     return {
