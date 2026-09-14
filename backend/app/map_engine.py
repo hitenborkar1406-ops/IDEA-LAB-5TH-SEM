@@ -62,10 +62,34 @@ def load_dataset() -> pd.DataFrame:
     if _df_cache is not None:
         return _df_cache
 
-    if not os.path.exists(DATA_PATH):
-        raise FileNotFoundError(f"traffic_map_data.csv not found at {DATA_PATH}")
+    if os.path.exists(DATA_PATH):
+        df = pd.read_csv(DATA_PATH)
+        _df_cache = df
+        return df
 
-    df = pd.read_csv(DATA_PATH)
+    # Auto-generate if missing on cloud host
+    try:
+        sumo_dir = os.path.dirname(DATA_PATH)
+        m_geom = os.path.join(sumo_dir, "morning_edge_geometry.csv")
+        e_geom = os.path.join(sumo_dir, "evening_edge_geometry.csv")
+        if os.path.exists(m_geom) and os.path.exists(e_geom):
+            from sumo.generate_traffic_map_data import generate_period
+            m_df = pd.read_csv(m_geom)
+            e_df = pd.read_csv(e_geom)
+            m_data = generate_period(m_df, "Morning")
+            e_data = generate_period(e_df, "Evening")
+            df = pd.concat([m_data, e_data], ignore_index=True)
+            _df_cache = df
+            return df
+    except Exception as exc:
+        print(f"Dataset generation failed: {exc}")
+
+    # Fallback to empty DataFrame with expected columns
+    df = pd.DataFrame(columns=[
+        "edge_id", "interval_begin_sec", "time_period", "flow", "speed",
+        "density", "waitingTime", "timeLoss", "predicted_congestion_class",
+        "from_x", "from_y", "to_x", "to_y", "shape"
+    ])
     _df_cache = df
     return df
 
