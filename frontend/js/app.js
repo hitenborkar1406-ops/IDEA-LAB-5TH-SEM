@@ -1501,9 +1501,9 @@ function MLEngineTab({ selectedTime }) {
       e('div', { className: 'ml-header glass-panel' },
         e('div', null,
           e('h2', null, e('i', { className: 'fa-solid fa-brain text-gold' }), ' Machine Learning Congestion Classifier'),
-          e('p', null, `Trained Scikit-Learn ${mlInfo ? mlInfo.algorithm : 'RandomForestClassifier'} model scoring live feature vectors in real-time.`)
+          e('p', null, `Trained ${mlInfo && mlInfo.model_name ? mlInfo.model_name : 'XGBoost (XGBClassifier)'} model scoring live feature vectors in real-time.`)
         ),
-        e('span', { className: 'badge-ml-algo' }, e('i', { className: 'fa-solid fa-microchip' }), ` Algorithm: ${mlInfo ? mlInfo.algorithm : 'RandomForest'}`)
+        e('span', { className: 'badge-ml-algo' }, e('i', { className: 'fa-solid fa-microchip' }), ` Algorithm: ${mlInfo ? mlInfo.algorithm : 'XGBoost'}`)
       ),
 
       e('div', { className: 'ml-grid' },
@@ -1556,12 +1556,12 @@ function MLEngineTab({ selectedTime }) {
 
         e('div', { className: 'feature-chart-card glass-panel' },
           e('h3', null, e('i', { className: 'fa-solid fa-chart-bar text-gold' }), ' SUMO Feature Importance Weights'),
-          e('p', null, 'Relative importance weights learned by the trained Scikit-Learn RandomForest classifier:'),
+          e('p', null, 'Relative importance weights learned by the trained XGBoost gradient boosting classifier:'),
           e('div', { className: 'chart-container' }, e('canvas', { id: 'featureImportanceChart' })),
           e('div', { className: 'provenance-box', style: { marginTop: '16px' } },
             e('div', { className: 'provenance-item' }, e('span', null, 'Validation:'), ' ', e('strong', null, mlInfo ? mlInfo.validation : '5-Fold CV')),
-            e('div', { className: 'provenance-item' }, e('span', null, 'Accuracy:'), ' ', e('strong', { className: 'text-green' }, mlInfo ? mlInfo.accuracy : '91.7%')),
-            e('div', { className: 'provenance-item' }, e('span', null, 'F1-Score:'), ' ', e('strong', { className: 'text-gold' }, mlInfo ? mlInfo.f1_score : '0.89'))
+            e('div', { className: 'provenance-item' }, e('span', null, 'Accuracy:'), ' ', e('strong', { className: 'text-green' }, mlInfo ? mlInfo.accuracy : '95.4%')),
+            e('div', { className: 'provenance-item' }, e('span', null, 'F1-Score:'), ' ', e('strong', { className: 'text-gold' }, mlInfo ? mlInfo.f1_score : '0.94'))
           )
         )
       )

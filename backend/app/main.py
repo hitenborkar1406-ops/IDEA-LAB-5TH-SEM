@@ -230,7 +230,7 @@ async def simulate_stream(time_window: str = "morning", scenario: str = "baselin
             (30, f"Generating {('9AM-12PM' if time_window=='morning' else '4PM-7PM')} demand profile "
                  f"(x{demand_multiplier} multiplier{', lane closure active' if lane_closure else ''})..."),
             (55, "Running deterministic queueing simulation per intersection..."),
-            (75, "Scoring congestion with RandomForest classifier..."),
+            (75, "Scoring congestion with XGBoost classifier..."),
             (90, "Applying adaptive signal + reroute control..." if scenario == "proposed" else "Applying fixed-time signal plan..."),
         ]
         for pct, msg in stages:
