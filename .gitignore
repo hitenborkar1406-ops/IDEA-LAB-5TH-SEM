@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+*.log
+
+# Environment
+.env
+*.env.local
+*.env.production
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+
+# ML Model (tracked via Git LFS or excluded if too large)
+# backend/app/model.pkl
+
+# SUMO large data files
+sumo/traffic_map_data.csv
+sumo/v2_all_predictions.csv
+sumo/v2_evening_predictions.csv
+sumo/v2_morning_predictions.csv
+sumo/osm.net.xml.gz
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Zip artifacts
+files.zip
+
+# Jupyter
+.ipynb_checkpoints/

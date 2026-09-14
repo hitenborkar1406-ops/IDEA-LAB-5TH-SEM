@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Heavy demand file for Sitabuldi Junction Simulation
+  Strategy: 
+    - Dense flow on main_road to create congestion
+    - 800 vehicles/hour for 600 seconds = ~133 vehicles on a 500m stretch
+    - This corresponds to ~0.27 vehicles/second = 1 vehicle every 3.7 seconds
+    - With 4.5m vehicles + 2.5m gap = 7m per vehicle, 133 vehicles = ~931m jam
+      which greatly exceeds the 504m main route -> guaranteed congestion
+    - Also add some vehicles on side_street to represent background traffic
+-->
+<routes>
+    <vType id="car"
+           accel="2.6"
+           decel="4.5"
+           emergencyDecel="9.0"
+           sigma="0.5"
+           length="4.5"
+           minGap="2.5"
+           maxSpeed="16.67"
+           speedFactor="normc(1.0, 0.1, 0.2, 1.8)"
+           guiShape="passenger"
+           color="1,0.6,0"/>
+
+    <!-- Route 1: Main arterial (504m) - rerouting devices will monitor this -->
+    <route id="main_road"
+           edges="-93465710#10 -225888744#0 27110922#14 -27110922#14"/>
+
+    <!-- Route 2: Alternative side street (551m) -->
+    <route id="side_street"
+           edges="-93465710#10 -225888744#0 -27110922#12 27110922#12 27110922#14 -27110922#14"/>
+
+    <!-- 
+      MAIN ROAD FLOW: ~800 veh/hr during peak (seconds 0-600)
+      period=4.5 means 1 vehicle every 4.5s = 800/hr
+      All start on main_road; rerouting device may redirect them mid-trip
+    -->
+    <flow id="flow_main_peak"
+          type="car"
+          route="main_road"
+          begin="0"
+          end="600"
+          period="4.5"
+          departLane="best"
+          departSpeed="max"
+          color="255,100,0">
+        <param key="has.rerouting.device" value="true"/>
+    </flow>
+
+    <!--
+      EXTRA SURGE: additional burst 100-300s to amplify congestion
+      period=3.0 means ~1200 veh/hr
+    -->
+    <flow id="flow_main_surge"
+          type="car"
+          route="main_road"
+          begin="100"
+          end="300"
+          period="3.0"
+          departLane="best"
+          departSpeed="max"
+          color="255,0,0">
+        <param key="has.rerouting.device" value="true"/>
+    </flow>
+
+    <!--
+      SIDE STREET BACKGROUND: lighter background traffic on alternate route
+      This ensures vehicles CAN use side_street (prove it's navigable)
+      period=15 = ~240 veh/hr
+    -->
+    <flow id="flow_side_bg"
+          type="car"
+          route="side_street"
+          begin="0"
+          end="600"
+          period="15"
+          departLane="best"
+          departSpeed="max"
+          color="0,150,255">
+        <param key="has.rerouting.device" value="true"/>
+    </flow>
+
+</routes>

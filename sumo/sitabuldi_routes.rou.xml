@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Routes for Sitabuldi Junction Simulation
+  Network: sitabuldi_junction.net.xml
+  Junction: cluster_2347019624_312691688_312691691 (79.086048, 21.144963)
+  
+  OD Pair:
+    Origin      : -93465710#10  (132m, speed ~50km/h)
+    Destination : -27110922#14  (145m, speed ~80km/h)
+  
+  Route 1 (main_road): 504m total - direct through the Sitabuldi junction
+    -93465710#10 -> -225888744#0 -> 27110922#14 -> -27110922#14
+  
+  Route 2 (side_street): 551m total - secondary loop through the junction
+    -93465710#10 -> -225888744#0 -> -27110922#12 -> 27110922#12 -> 27110922#14 -> -27110922#14
+  
+  The main_road route is 504m; the side_street is 551m (~47m longer).
+  Under free-flow, main_road is faster. Under heavy congestion on main_road,
+  rerouting to side_street becomes rational.
+-->
+<routes>
+    <vType id="car"
+           accel="2.6"
+           decel="4.5"
+           emergencyDecel="9.0"
+           sigma="0.5"
+           length="4.5"
+           minGap="2.5"
+           maxSpeed="16.67"
+           speedFactor="normc(1.0, 0.1, 0.2, 1.8)"
+           guiShape="passenger"
+           color="1,0.6,0"/>
+
+    <!-- Route 1: Main arterial road through Sitabuldi, 504m -->
+    <route id="main_road"
+           edges="-93465710#10 -225888744#0 27110922#14 -27110922#14"/>
+
+    <!-- Route 2: Alternative side street, 551m - loops back around the junction -->
+    <route id="side_street"
+           edges="-93465710#10 -225888744#0 -27110922#12 27110922#12 27110922#14 -27110922#14"/>
+
+</routes>

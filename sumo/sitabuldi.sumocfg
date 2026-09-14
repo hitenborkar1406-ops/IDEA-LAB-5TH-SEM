@@ -1,0 +1,14 @@
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+    <input>
+        <net-file value="sitabuldi_junction_tls.net.xml"/>
+        <route-files value="sitabuldi_demand.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="800"/>
+        <step-length value="1"/>
+    </time>
+    <processing>
+        <time-to-teleport value="-1"/>
+    </processing>
+</configuration>

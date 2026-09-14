@@ -1,0 +1,11 @@
+{
+  "name": "smart-traffic-project",
+  "version": "1.0.0",
+  "description": "Smart Traffic Management System for Uneven Traffic Distribution",
+  "scripts": {
+    "dev": "python -m uvicorn backend.app.main:app --reload --port 8000",
+    "backend": "uvicorn backend.app.main:app --reload --port 8000",
+    "frontend": "python -m http.server 3000 --directory frontend",
+    "start": "python -m uvicorn backend.app.main:app --reload --port 8000"
+  }
+}
