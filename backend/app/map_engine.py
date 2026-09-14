@@ -6,6 +6,7 @@ and serves filtered edge segment metrics, geometries, and corridor hotspots.
 """
 
 import os
+import numpy as np
 import pandas as pd
 from typing import Dict, List, Any, Optional
 
