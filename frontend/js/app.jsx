@@ -289,11 +289,6 @@ function App() {
           </div>
           
           <div className="header-actions">
-            <div className="system-status">
-              <span className="status-indicator online"></span>
-              <span className="status-text">SUMO Integration: <strong>PROTOTYPE</strong></span>
-            </div>
-            
             {/* Dual Clock: System Time vs Simulation Time */}
             <div className="dual-clock-container">
               <div className="clock-card">
@@ -483,7 +478,6 @@ function ControlPanelTab({ selectedArea, setSelectedArea, selectedTime, setSelec
               <div className="provenance-box">
                 <div className="provenance-item"><span>Source:</span> <strong>SUMO Microscopic Simulation</strong></div>
                 <div className="provenance-item"><span>Run ID:</span> <strong>{scenarioInfo.runId}</strong></div>
-                <div className="provenance-item"><span>Data Status:</span> <strong className="text-amber">Demo / Illustrative Data</strong></div>
               </div>
             </div>
 

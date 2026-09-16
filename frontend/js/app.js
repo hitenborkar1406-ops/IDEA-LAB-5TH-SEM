@@ -510,11 +510,6 @@ function App() {
           )
         ),
         e('div', { className: 'header-actions' },
-          e('div', { className: 'system-status' },
-            e('span', { className: 'status-indicator online' }),
-            e('span', { className: 'status-text' }, 'SUMO Integration: ', e('strong', { className: 'text-green' }, 'ONLINE (v1.27.1 TraCI)'))
-          ),
-
           e('div', { className: 'dual-clock-container' },
             e('div', { className: 'clock-card' },
               e('i', { className: 'fa-regular fa-clock' }),
@@ -665,8 +660,7 @@ function ControlPanelTab({
       // Left Sidebar: Simulation Parameters Form
       e('div', { className: 'control-card glass-panel' },
         e('div', { className: 'card-header' },
-          e('h3', null, e('i', { className: 'fa-solid fa-sliders' }), ' Simulation Parameters'),
-          e('span', { className: 'badge-node-status green' }, 'Live API Engine')
+          e('h3', null, e('i', { className: 'fa-solid fa-sliders' }), ' Simulation Parameters')
         ),
         e('form', { onSubmit: (ev) => ev.preventDefault() },
           e('div', { className: 'form-group' },
@@ -712,8 +706,7 @@ function ControlPanelTab({
             e('p', null, scenarioInfo.desc),
             e('div', { className: 'provenance-box' },
               e('div', { className: 'provenance-item' }, e('span', null, 'Source:'), ' ', e('strong', null, 'FastAPI Backend + SUMO TraCI Engine')),
-              e('div', { className: 'provenance-item' }, e('span', null, 'Run ID:'), ' ', e('strong', null, scenarioInfo.runId)),
-              e('div', { className: 'provenance-item' }, e('span', null, 'Data Status:'), ' ', e('strong', { className: 'text-green' }, 'Live Dynamic Computation'))
+              e('div', { className: 'provenance-item' }, e('span', null, 'Run ID:'), ' ', e('strong', null, scenarioInfo.runId))
             )
           ),
 
@@ -792,7 +785,7 @@ function ControlPanelTab({
             e('div', { className: 'box-meta-tags' },
               isMatrixComputing
                 ? e('span', { className: 'tag-telemetry text-cyan' }, e('i', { className: 'fa-solid fa-circle-notch fa-spin' }), ' Computing Telemetry...')
-                : e('span', { className: 'tag-telemetry text-green' }, e('i', { className: 'fa-solid fa-bolt' }), ' Live Generated • 28ms')
+                : e('span', { className: 'tag-telemetry text-green' }, e('i', { className: 'fa-solid fa-bolt' }), ' 28ms')
             )
           ),
 
@@ -854,8 +847,7 @@ function ControlPanelTab({
               ),
               e('div', { className: 'box-telemetry-footer' },
                 e('span', null, 'Run Token: ', e('strong', null, `TRACI_NAGPUR_${selectedTime.toUpperCase()}_01`)),
-                e('span', null, 'Calculation Status: ', e('strong', { className: 'text-green' }, 'Validated Dynamic Output')),
-                e('span', null, 'Timestamp: ', e('strong', null, lastCalculatedTime || 'Live Continuous Sync'))
+                e('span', null, 'Calculation Status: ', e('strong', { className: 'text-green' }, 'Validated Dynamic Output'))
               )
             )
         ),
@@ -1501,15 +1493,15 @@ function MLEngineTab({ selectedTime }) {
       e('div', { className: 'ml-header glass-panel' },
         e('div', null,
           e('h2', null, e('i', { className: 'fa-solid fa-brain text-gold' }), ' Machine Learning Congestion Classifier'),
-          e('p', null, `Trained ${mlInfo && mlInfo.model_name ? mlInfo.model_name : 'XGBoost (XGBClassifier)'} model scoring live feature vectors in real-time.`)
+          e('p', null, `Trained ${mlInfo && mlInfo.model_name ? mlInfo.model_name : 'XGBoost (XGBClassifier)'} model.`)
         ),
         e('span', { className: 'badge-ml-algo' }, e('i', { className: 'fa-solid fa-microchip' }), ` Algorithm: ${mlInfo ? mlInfo.algorithm : 'XGBoost'}`)
       ),
 
       e('div', { className: 'ml-grid' },
         e('div', { className: 'ml-card glass-panel' },
-          e('h3', null, e('i', { className: 'fa-solid fa-sliders' }), ' Real-Time Vector Feature Input Sandbox'),
-          e('p', null, 'Adjust live feature inputs to compute immediate ML congestion classification and control action:'),
+          e('h3', null, e('i', { className: 'fa-solid fa-sliders' }), ' Vector Feature Input Sandbox'),
+          e('p', null, 'Adjust feature inputs to compute immediate ML congestion classification and control action:'),
           e('form', { className: 'ml-input-form', onSubmit: (ev) => ev.preventDefault() },
             e('div', { className: 'slider-group' },
               e('div', { className: 'slider-label-row' },
@@ -1881,7 +1873,7 @@ function AnalyticsTab({ selectedScenario, selectedTime }) {
       e('div', { className: 'analytics-header glass-panel' },
         e('div', null,
           e('h2', null, e('i', { className: 'fa-solid fa-chart-line text-gold' }), ' Simulation Performance & Timeseries Analytics'),
-          e('p', null, `Real-time 3-hour window timeseries (${selectedTime === 'morning-peak' ? 'Morning 09:00–12:00' : 'Evening 16:00–19:00'}) across all 36 steps.`)
+          e('p', null, `3-hour window timeseries (${selectedTime === 'morning-peak' ? 'Morning 09:00–12:00' : 'Evening 16:00–19:00'}) across all 36 steps.`)
         ),
         e('button', { onClick: handleExportPDF, className: 'btn-primary-action', style: { width: 'auto', padding: '10px 20px' } },
           e('i', { className: 'fa-solid fa-file-pdf' }), ' EXPORT PDF REPORT'
@@ -2292,10 +2284,10 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
       e('div', null,
         e('h2', null,
           e('i', { className: 'fa-solid fa-video text-gold' }),
-          ' Live Intersection View'
+          ' Intersection View'
         ),
         e('p', null,
-          'Real detection feed (left) · SUMO digital twin (right) · Shared playback clock'
+          'Detection feed (left) · SUMO digital twin (right) · Shared playback clock'
         )
       ),
       e('div', { style: { display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' } },
@@ -2341,7 +2333,7 @@ function LiveIntersectionView({ simData, simTime, playing, setPlaying, speed, se
           e('div', { className: 'live-stat-overlay top-left' },
             e('div', { className: 'live-stat-pill' },
               e('i', { className: 'fa-solid fa-car' }),
-              ` Live Vehicles: ${liveCount}`
+              ` Vehicles: ${liveCount}`
             ),
             e('div', { className: 'live-stat-pill', style: { color: congestionColor, borderColor: congestionColor + '60' } },
               e('i', { className: 'fa-solid fa-gauge-high' }),
@@ -3014,17 +3006,15 @@ function SumoTab() {
     e('div', { className: 'sumo-sim-header glass-panel' },
       e('div', null,
         e('h2', null, e('i', { className: 'fa-solid fa-route text-gold' }),
-          ' SUMO Live Microscopic Simulation — Sitabuldi Junction'),
+          ' SUMO Microscopic Simulation — Sitabuldi Junction'),
         e('p', null,
-          `Real SUMO 1.27.1 TraCI run · ${meta.steps_run} steps · ` +
+          `SUMO 1.27.1 TraCI run · ${meta.steps_run} steps · ` +
           `${meta.total_vehicles} vehicles · ` +
           `junction ${meta.junction_lon.toFixed(5)}°E, ${meta.junction_lat.toFixed(5)}°N`)
       ),
       e('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' } },
         e('span', { className: 'badge-node-status green' },
-          e('i', { className: 'fa-solid fa-circle-check' }), ' SUMO v1.27.1 TraCI'),
-        e('span', { className: 'tag-sim live' },
-          e('i', { className: 'fa-solid fa-circle' }), ' REAL DATA')
+          e('i', { className: 'fa-solid fa-circle-check' }), ' SUMO v1.27.1 TraCI')
       )
     ),
 
@@ -3034,7 +3024,7 @@ function SumoTab() {
         e('div', { className: 'sumo-stat-icon kpi-icon yellow-glow' },
           e('i', { className: 'fa-solid fa-car' })),
         e('div', null,
-          e('div', { className: 'sumo-stat-label' }, 'Live Vehicles'),
+          e('div', { className: 'sumo-stat-label' }, 'Vehicles'),
           e('div', { className: 'sumo-stat-value' }, liveVehicles),
           e('div', { className: 'sumo-stat-sub' }, `at t=${tFloor}s`))
       ),
@@ -3205,17 +3195,7 @@ function SumoTab() {
       speed,
       setSpeed,
       setSimTime
-    }),
-
-    // ── Provenance footer ──────────────────────────────────────────────────
-    e('div', { className: 'sumo-provenance' },
-      e('span', null, 'Source: ', e('strong', null, 'sim_output_clean.json')),
-      e('span', null, 'Engine: ', e('strong', null, 'SUMO 1.27.1 TraCI (sitabuldi_sim.py)')),
-      e('span', null, 'Network: ', e('strong', null, 'sitabuldi_junction_tls.net.xml')),
-      e('span', null, 'Vehicles: ', e('strong', null, String(meta.total_vehicles))),
-      e('span', null, 'Steps: ', e('strong', null, String(meta.steps_run))),
-      e('span', null, 'Reroutes (genuine): ', e('strong', null, String(rerouteEvents.length)))
-    )
+    })
   );
 }
 
